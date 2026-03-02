@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陈奎铭 2025-2026春 课表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0d0d2b 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 24px 16px;
+        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .header .subtitle { color: #9ca3af; font-size: 0.9rem; }
+        .week-nav {
+            display: flex; justify-content: center; align-items: center;
+            gap: 16px; margin-bottom: 18px;
+        }
+        .week-nav button {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+            color: #e0e0e0; padding: 8px 18px; border-radius: 10px;
+            cursor: pointer; font-size: 0.9rem; transition: all 0.3s;
+        }
+        .week-nav button:hover { background: rgba(167,139,250,0.2); border-color: rgba(167,139,250,0.4); }
+        .week-label { font-size: 1.1rem; font-weight: 600; color: #a78bfa; min-width: 100px; text-align: center; }
+        .schedule-wrapper { max-width: 1400px; margin: 0 auto; overflow-x: auto; }
+        table.schedule {
+            width: 100%; border-collapse: separate; border-spacing: 3px; min-width: 960px;
+        }
+        table.schedule th {
+            background: rgba(167,139,250,0.15); padding: 10px 6px; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 600; color: #c4b5fd; text-align: center;
+        }
+        table.schedule th.today {
+            background: rgba(167,139,250,0.35); color: #fff;
+            box-shadow: 0 0 12px rgba(167,139,250,0.3);
+        }
+        table.schedule td {
+            vertical-align: middle; text-align: center; height: 44px; padding: 0;
+        }
+        td.period-cell {
+            background: rgba(96,165,250,0.1); border-radius: 8px;
+            font-size: 0.8rem; color: #60a5fa; font-weight: 600; width: 38px;
+        }
+        td.section-cell {
+            background: rgba(255,255,255,0.03); border-radius: 6px;
+            font-size: 0.75rem; color: #6b7280; width: 28px;
+        }
+        td.time-cell {
+            background: rgba(255,255,255,0.04); border-radius: 6px;
+            font-size: 0.7rem; color: #9ca3af; width: 90px; white-space: nowrap;
+        }
+        td.empty-cell { background: rgba(255,255,255,0.015); border-radius: 6px; }
+        .course-card {
+            border-radius: 10px; padding: 8px 10px; height: 100%;
+            display: flex; flex-direction: column; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .course-card::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 4px; border-radius: 4px 0 0 4px;
+        }
+        .course-card:hover { transform: scale(1.02); z-index: 10; }
+        .c-purple { background: rgba(167,139,250,0.13); border: 1px solid rgba(167,139,250,0.22); }
+        .c-purple::before { background: #a78bfa; }
+        .c-purple:hover { box-shadow: 0 4px 20px rgba(167,139,250,0.25); }
+        .c-blue { background: rgba(96,165,250,0.13); border: 1px solid rgba(96,165,250,0.22); }
+        .c-blue::before { background: #60a5fa; }
+        .c-blue:hover { box-shadow: 0 4px 20px rgba(96,165,250,0.25); }
+        .c-green { background: rgba(52,211,153,0.13); border: 1px solid rgba(52,211,153,0.22); }
+        .c-green::before { background: #34d399; }
+        .c-green:hover { box-shadow: 0 4px 20px rgba(52,211,153,0.25); }
+        .c-orange { background: rgba(251,191,36,0.13); border: 1px solid rgba(251,191,36,0.22); }
+        .c-orange::before { background: #fbbf24; }
+        .c-orange:hover { box-shadow: 0 4px 20px rgba(251,191,36,0.25); }
+        .c-pink { background: rgba(244,114,182,0.13); border: 1px solid rgba(244,114,182,0.22); }
+        .c-pink::before { background: #f472b6; }
+        .c-pink:hover { box-shadow: 0 4px 20px rgba(244,114,182,0.25); }
+        .c-cyan { background: rgba(34,211,238,0.13); border: 1px solid rgba(34,211,238,0.22); }
+        .c-cyan::before { background: #22d3ee; }
+        .c-cyan:hover { box-shadow: 0 4px 20px rgba(34,211,238,0.25); }
+        .c-red { background: rgba(248,113,113,0.13); border: 1px solid rgba(248,113,113,0.22); }
+        .c-red::before { background: #f87171; }
+        .c-red:hover { box-shadow: 0 4px 20px rgba(248,113,113,0.25); }
+        .c-teal { background: rgba(45,212,191,0.13); border: 1px solid rgba(45,212,191,0.22); }
+        .c-teal::before { background: #2dd4bf; }
+        .c-teal:hover { box-shadow: 0 4px 20px rgba(45,212,191,0.25); }
+        .c-indigo { background: rgba(129,140,248,0.13); border: 1px solid rgba(129,140,248,0.22); }
+        .c-indigo::before { background: #818cf8; }
+        .c-indigo:hover { box-shadow: 0 4px 20px rgba(129,140,248,0.25); }
+        .c-amber { background: rgba(245,158,11,0.13); border: 1px solid rgba(245,158,11,0.22); }
+        .c-amber::before { background: #f59e0b; }
+        .c-amber:hover { box-shadow: 0 4px 20px rgba(245,158,11,0.25); }
+        .course-name { font-size: 0.82rem; font-weight: 600; color: #f3f4f6; padding-left: 8px; margin-bottom: 3px; text-align: left; }
+        .course-info { font-size: 0.68rem; color: #9ca3af; padding-left: 8px; line-height: 1.4; text-align: left; }
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); z-index: 1000;
+            justify-content: center; align-items: center; backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: linear-gradient(145deg, #1e1e3f, #2a2a50);
+            border: 1px solid rgba(167,139,250,0.3); border-radius: 20px;
+            padding: 28px; max-width: 420px; width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal h2 { font-size: 1.2rem; color: #e5e7eb; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .modal-row { display: flex; padding: 7px 0; font-size: 0.88rem; }
+        .modal-label { color: #9ca3af; width: 70px; flex-shrink: 0; }
+        .modal-value { color: #e5e7eb; }
+        .modal-close {
+            margin-top: 18px; width: 100%; padding: 10px; border-radius: 12px;
+            border: 1px solid rgba(167,139,250,0.3); background: rgba(167,139,250,0.15);
+            color: #c4b5fd; font-size: 0.9rem; cursor: pointer; transition: all 0.3s;
+        }
+        .modal-close:hover { background: rgba(167,139,250,0.3); }
+        .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 18px; padding: 14px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: #9ca3af; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+        .hint { text-align: center; color: #6b7280; font-size: 0.78rem; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>陈奎铭 · 课程表</h1>
+    <div class="subtitle">2025-2026学年 春季学期 · 学号 25121170</div>
+</div>
+
+<div class="week-nav">
+    <button onclick="changeWeek(-1)">◀ 上一周</button>
+    <div class="week-label" id="weekLabel">第 1 周</div>
+    <button onclick="changeWeek(1)">下一周 ▶</button>
+</div>
+<p class="hint">点击课程卡片查看详情 · 根据周次自动显示当周课程</p>
+
+<div class="schedule-wrapper">
+    <table class="schedule" id="tbl"></table>
+</div>
+
+<div class="legend" id="legend"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const SEMESTER_START = new Date('2026-02-23');
+
+// 每节课的时间
+const sectionTimes = {
+    1: '08:00-08:45', 2: '08:55-09:40',
+    3: '10:00-10:45', 4: '10:55-11:40',
+    5: '13:00-13:45', 6: '13:55-14:40',
+    7: '15:00-15:45', 8: '15:55-16:40',
+    9: '18:00-18:45', 10: '18:55-19:40',
+    11: '19:50-20:35', 12: '20:45-21:30'
+};
+
+// 行定义：12节课，每节一行
+const rows = [];
+for (let i = 1; i <= 12; i++) {
+    let period = '';
+    if (i === 1) period = '上午';
+    else if (i === 5) period = '下午';
+    else if (i === 9) period = '晚上';
+    let periodSpan = 0;
+    if (i === 1) periodSpan = 4;
+    else if (i === 5) periodSpan = 4;
+    else if (i === 9) periodSpan = 4;
+    rows.push({ section: i, time: sectionTimes[i], period, periodSpan });
+}
+
+const days = ['星期一','星期二','星期三','星期四','星期五','星期六','星期日'];
+
+const colorMap = {
+    '世界美术史': 'c-purple',
+    '思想道德与法治': 'c-blue',
+    '古代汉语': 'c-green',
+    '形势与政策': 'c-orange',
+    '化学与饮食安全': 'c-pink',
+    '英语国家社会与文化': 'c-cyan',
+    '启蒙思想家与日本近代化': 'c-red',
+    '中国美术史': 'c-teal',
+    '大学英语C': 'c-indigo',
+    '新数字媒体基础与应用': 'c-amber',
+    '男生足球': 'c-orange',
+    '游泳': 'c-pink',
+    '艺术+科技': 'c-cyan',
+    '艺术实践': 'c-red',
+    '军事理论': 'c-purple'
+};
+
+const colorHex = {
+    'c-purple': '#a78bfa', 'c-blue': '#60a5fa', 'c-green': '#34d399',
+    'c-orange': '#fbbf24', 'c-pink': '#f472b6', 'c-cyan': '#22d3ee',
+    'c-red': '#f87171', 'c-teal': '#2dd4bf', 'c-indigo': '#818cf8', 'c-amber': '#f59e0b'
+};
+
+// 课程数据：startSection=起始节, endSection=结束节
+const courses = [
+    // ===== 星期一 =====
+    { name: '世界美术史(2)', day: 0, startSection: 1, endSection: 2, weeks: [1,16], room: 'A111', teacher: '刘向娟', code: 'BBK1761004' },
+    { name: '化学与饮食安全', day: 0, startSection: 5, endSection: 6, weeks: [9,16], room: 'GJ203', teacher: '纪晓波', code: 'KBK0100002' },
+    { name: '启蒙思想家与日本近代化', day: 0, startSection: 7, endSection: 8, weeks: [9,16], room: 'CJ207', teacher: '张智慧', code: 'ZBK0400003' },
+    { name: '军事理论', day: 0, startSection: 11, endSection: 12, weeks: [1,8,16], weekType: 'specific', room: 'EJ203', teacher: '张金翠', code: 'GBK2000008' },
+
+    // ===== 星期二 =====
+    { name: '思想道德与法治', day: 1, startSection: 1, endSection: 2, weeks: [1,16], room: 'DJ104', teacher: '管坤', code: 'GBK2000003' },
+    { name: '古代汉语', day: 1, startSection: 3, endSection: 4, weeks: [1,16], room: 'C116', teacher: '胡建君', code: 'BBK1761008' },
+    { name: '英语国家社会与文化', day: 1, startSection: 5, endSection: 6, weeks: [1,8], room: 'D206', teacher: '王晓莹', code: 'XBK0614012' },
+    { name: '形势与政策', day: 2, startSection: 3, endSection: 4, weeks: [1,5,9,13], weekType: 'specific', room: 'EJ404', teacher: '刘子杰', code: 'GBK2000001' },
+    { name: '中国美术史(2)', day: 1, startSection: 7, endSection: 8, weeks: [1,16], room: 'B310', teacher: '胡建君', code: 'BBK1761002' },
+    { name: '新数字媒体基础与应用', day: 1, startSection: 9, endSection: 11, weeks: [1,16], room: 'D413', teacher: '张军英', code: 'GBK1200004' },
+
+    // ===== 星期三 =====
+    { name: '世界美术史(2)', day: 2, startSection: 1, endSection: 2, weeks: [1,16], room: 'A111', teacher: '刘向娟', code: 'BBK1761004' },
+    { name: '大学英语C(2)', day: 2, startSection: 7, endSection: 8, weeks: [1,16], room: 'A321', teacher: '安宁', code: 'GBK0600010' },
+    { name: '艺术实践(2)', day: 2, startSection: 9, endSection: 12, weeks: [1,14], room: '美院316', teacher: '汤宁容', code: 'BBK1761006' },
+
+    // ===== 星期四 =====
+    { name: '思想道德与法治', day: 3, startSection: 1, endSection: 2, weeks: [1,16], room: 'DJ104', teacher: '管坤', code: 'GBK2000003' },
+    { name: '古代汉语', day: 3, startSection: 3, endSection: 4, weeks: [1,16], room: 'C116', teacher: '胡建君', code: 'BBK1761008' },
+    { name: '艺术+科技：跨领域创新', day: 3, startSection: 5, endSection: 6, weeks: [1,16], room: 'AJ204', teacher: '周予希', code: 'JBK1700001' },
+    { name: '游泳(基础)', day: 3, startSection: 5, endSection: 6, weeks: [9,16], room: '游泳馆大池', teacher: '王永', code: 'GBK2800210', note: '男生游泳' },
+    { name: '英语国家社会与文化', day: 3, startSection: 5, endSection: 6, weeks: [9,16], room: 'D206', teacher: '阚怀未', code: 'XBK0614012' },
+    { name: '中国美术史(2)', day: 3, startSection: 7, endSection: 8, weeks: [1,16], room: 'B310', teacher: '胡建君', code: 'BBK1761002' },
+
+    // ===== 星期五 =====
+    { name: '男生足球(基础)', day: 4, startSection: 1, endSection: 2, weeks: [1,8], room: 'J区北侧', teacher: '益广仁', code: 'GBK2800202' },
+];
+
+let currentWeek = 1;
+
+function calcCurrentWeek() {
+    const diff = new Date() - SEMESTER_START;
+    return Math.max(1, Math.min(16, Math.ceil(diff / (7*24*60*60*1000))));
+}
+
+function isActive(c, week) {
+    if (c.weekType === 'specific') return c.weeks.includes(week);
+    return week >= c.weeks[0] && week <= c.weeks[1];
+}
+
+// 获取某天某节开始的课程（当周有效的）
+function getCourseAt(day, section, week) {
+    return courses.filter(c => c.day === day && c.startSection === section && isActive(c, week));
+}
+
+function getColor(name) {
+    for (const k in colorMap) { if (name.includes(k)) return colorMap[k]; }
+    return 'c-purple';
+}
+
+function sectionTimeRange(start, end) {
+    return sectionTimes[start].split('-')[0] + ' - ' + sectionTimes[end].split('-')[1];
+}
+
+function showModal(c) {
+    const m = document.getElementById('modal');
+    const weekStr = c.weekType === 'specific'
+        ? '第 ' + c.weeks.join(', ') + ' 周'
+        : '第 ' + c.weeks[0] + '-' + c.weeks[1] + ' 周';
+    m.innerHTML = `
+        <h2>${c.name}</h2>
+        <div class="modal-row"><span class="modal-label">课程号</span><span class="modal-value">${c.code}</span></div>
+        <div class="modal-row"><span class="modal-label">教师</span><span class="modal-value">${c.teacher}</span></div>
+        <div class="modal-row"><span class="modal-label">教室</span><span class="modal-value">${c.room}</span></div>
+        <div class="modal-row"><span class="modal-label">节次</span><span class="modal-value">${days[c.day]} 第${c.startSection}-${c.endSection}节</span></div>
+        <div class="modal-row"><span class="modal-label">时间</span><span class="modal-value">${sectionTimeRange(c.startSection, c.endSection)}</span></div>
+        <div class="modal-row"><span class="modal-label">周次</span><span class="modal-value">${weekStr}</span></div>
+        ${c.note ? '<div class="modal-row"><span class="modal-label">备注</span><span class="modal-value">' + c.note + '</span></div>' : ''}
+        <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('show')">关闭</button>
+    `;
+    document.getElementById('modalOverlay').classList.add('show');
+}
+
+function getTodayIdx() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
+
+function changeWeek(d) {
+    currentWeek = Math.max(1, Math.min(16, currentWeek + d));
+    render();
+}
+
+function render() {
+    document.getElementById('weekLabel').textContent = '第 ' + currentWeek + ' 周';
+    const todayIdx = getTodayIdx();
+    const isThisWeek = currentWeek === calcCurrentWeek();
+
+    // 构建被占用的单元格集合 occupied[day][section] = true
+    const occupied = {};
+    for (let d = 0; d < 7; d++) occupied[d] = {};
+
+    const tbl = document.getElementById('tbl');
+    let html = '<thead><tr><th style="width:38px"></th><th style="width:28px">节</th><th style="width:90px">时间</th>';
+    days.forEach((name, i) => {
+        html += '<th' + (i === todayIdx && isThisWeek ? ' class="today"' : '') + '>' + name + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    // 先预计算每个单元格的课程和rowspan
+    // cellData[section][day] = { courses: [...], rowspan: n } 或 null（被占用）
+    const cellData = {};
+    for (let s = 1; s <= 12; s++) {
+        cellData[s] = {};
+        for (let d = 0; d < 7; d++) {
+            cellData[s][d] = null; // 默认
+        }
+    }
+
+    for (let d = 0; d < 7; d++) {
+        for (let s = 1; s <= 12; s++) {
+            if (occupied[d][s]) continue;
+            const active = getCourseAt(d, s, currentWeek);
+            if (active.length > 0) {
+                const c = active[0]; // 取第一个（同时段多课时显示所有）
+                const span = c.endSection - c.startSection + 1;
+                cellData[s][d] = { courses: active, rowspan: span };
+                for (let k = s; k < s + span; k++) occupied[d][k] = true;
+            }
+        }
+    }
+
+    for (let s = 1; s <= 12; s++) {
+        const row = rows[s - 1];
+        html += '<tr>';
+
+        // Period cell
+        if (row.periodSpan > 0) {
+            html += '<td class="period-cell" rowspan="' + row.periodSpan + '">' + row.period + '</td>';
+        }
+
+        // Section number
+        html += '<td class="section-cell">' + s + '</td>';
+
+        // Time
+        html += '<td class="time-cell">' + row.time + '</td>';
+
+        // Days
+        for (let d = 0; d < 7; d++) {
+            if (occupied[d][s] && !cellData[s][d]) {
+                // This cell is occupied by a rowspan from above, skip
+                continue;
+            }
+
+            const cell = cellData[s][d];
+            if (cell) {
+                const c = cell.courses[0];
+                const cls = getColor(c.name);
+                const spanAttr = cell.rowspan > 1 ? ' rowspan="' + cell.rowspan + '"' : '';
+
+                // 如果同一时段有多门课（如星期四5-6节），全部显示
+                let cardHTML = '';
+                if (cell.courses.length === 1) {
+                    const cData = JSON.stringify(c).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                    cardHTML = '<div class="course-card ' + cls + '" onclick=\'showModal(' + JSON.stringify(c).replace(/'/g, "\\'") + ')\'>'
+                        + '<div class="course-name">' + c.name + '</div>'
+                        + '<div class="course-info">' + c.room + ' · ' + c.teacher + '</div>'
+                        + '</div>';
+                } else {
+                    // 多门课堆叠
+                    cardHTML = cell.courses.map(cc => {
+                        const ccls = getColor(cc.name);
+                        return '<div class="course-card ' + ccls + '" style="margin-bottom:3px;flex:1" onclick=\'showModal(' + JSON.stringify(cc).replace(/'/g, "\\'") + ')\'>'
+                            + '<div class="course-name" style="font-size:0.75rem">' + cc.name + '</div>'
+                            + '<div class="course-info">' + cc.room + ' · ' + cc.teacher + '</div>'
+                            + '</div>';
+                    }).join('');
+                    cardHTML = '<div style="display:flex;flex-direction:column;height:100%;gap:2px">' + cardHTML + '</div>';
+                }
+
+                html += '<td' + spanAttr + '>' + cardHTML + '</td>';
+            } else {
+                html += '<td class="empty-cell"></td>';
+            }
+        }
+
+        html += '</tr>';
+    }
+
+    html += '</tbody>';
+    tbl.innerHTML = html;
+
+    // Legend
+    const legendEl = document.getElementById('legend');
+    const activeNames = new Set();
+    courses.forEach(c => { if (isActive(c, currentWeek)) activeNames.add(c.name); });
+    let legendHTML = '';
+    activeNames.forEach(name => {
+        const cls = getColor(name);
+        legendHTML += '<div class="legend-item"><div class="legend-dot" style="background:' + (colorHex[cls]||'#a78bfa') + '"></div>' + name + '</div>';
+    });
+    legendEl.innerHTML = legendHTML;
+}
+
+currentWeek = calcCurrentWeek();
+render();
+</script>
+
+</body>
+</html>
